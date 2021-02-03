@@ -43,8 +43,10 @@ public class NPCController : MonoBehaviour {
     }
 
     public void OnHit(float damage, Rigidbody rb, Vector3 direction) {
-        if (!Alive)
+        if (!Alive) {
+            rb.AddForce(direction, ForceMode.Impulse);
             return;
+        }
 
         TakeDamage(damage);
         wave.AimAtThePlayer();
