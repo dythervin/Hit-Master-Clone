@@ -11,16 +11,16 @@ public class NPCController : MonoBehaviour {
     [SerializeField, ReadOnly] CharStateDef charState = CharStateDef.Idle;
     [SerializeField] Ragdoll ragdoll = null;
     [SerializeField] float randomIdleAnimationDelay = 10;
-
+    bool Alive => currentHealth > 0;
 
     float currentHealth;
     CharUI charUI;
     Wave wave;
     private void Awake() {
         ragdoll.SetKinematic(true);
+        currentHealth = maxHealth;
         randomIdleDelay = new WaitForSeconds(randomIdleAnimationDelay);
         StartCoroutine(RandomIdle());
-        currentHealth = maxHealth;
         charUI = UIManager.Instance.GetCharUI();
         charUI.Init(transform, 1);
         charUI.gameObject.SetActive(false);
@@ -37,15 +37,18 @@ public class NPCController : MonoBehaviour {
     static readonly int aimHash = Animator.StringToHash("Aim");
 
 
-
-    public void OnHit(float damage, Rigidbody rb, Vector3 direction) {
-        if (currentHealth <= 0)
-            return;
-
+    private void TakeDamage(float damage) {
         currentHealth -= damage;
         charUI.HealthBar.HealthPercent = currentHealth / maxHealth;
+    }
+
+    public void OnHit(float damage, Rigidbody rb, Vector3 direction) {
+        if (!Alive)
+            return;
+
+        TakeDamage(damage);
         wave.AimAtThePlayer();
-        if (currentHealth <= 0) {
+        if (!Alive) {
             animator.enabled = false;
             ragdoll.SetKinematic(false);
             rb.AddForce(direction, ForceMode.Impulse);

@@ -1,6 +1,6 @@
 ﻿public class Tags {
 
-    public static string player = "Player";
-    public static string hittable = "Hittable";
-    public static string hittableHead = "HittableHead";
+    public const string player = "Player";
+    public const string hittable = "Hittable";
+    public const string hittableHead = "HittableHead";
 }
